@@ -1,0 +1,91 @@
+{
+  "name": "n8n-nodes-base-blockchain",
+  "version": "1.0.0",
+  "description": "n8n community node for Base blockchain - Complete toolkit for Base L2 network interactions including transactions, tokens, NFTs, bridging, Basenames, attestations, and Coinbase ecosystem integrations",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "base",
+    "blockchain",
+    "ethereum",
+    "l2",
+    "optimism",
+    "coinbase",
+    "web3",
+    "crypto",
+    "defi",
+    "nft",
+    "bridge",
+    "basename",
+    "attestation",
+    "eas",
+    "farcaster",
+    "smart-wallet"
+  ],
+  "license": "BUSL-1.1",
+  "homepage": "https://github.com/Velocity-BPA/n8n-nodes-base-blockchain",
+  "author": {
+    "name": "Velocity BPA",
+    "email": "licensing@velobpa.com",
+    "url": "https://velobpa.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Velocity-BPA/n8n-nodes-base-blockchain.git"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier --write \"**/*.ts\"",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "prepublishOnly": "npm run build",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/BaseNetwork.credentials.js",
+      "dist/credentials/Basescan.credentials.js",
+      "dist/credentials/CoinbaseCloud.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Base/Base.node.js",
+      "dist/nodes/Base/BaseTrigger.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^6.18.0",
+    "@typescript-eslint/parser": "^6.18.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-n8n-nodes-base": "^1.16.0",
+    "gulp": "^4.0.2",
+    "jest": "^29.7.0",
+    "n8n-workflow": "^1.22.0",
+    "prettier": "^3.2.0",
+    "rimraf": "^5.0.5",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "ethers": "^6.10.0",
+    "viem": "^2.7.0",
+    "axios": "^1.6.5"
+  },
+  "peerDependencies": {
+    "n8n-workflow": ">=1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
