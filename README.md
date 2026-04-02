@@ -8,25 +8,25 @@
 >
 > For licensing information, visit https://velobpa.com/licensing or contact licensing@velobpa.com.
 
-An n8n community node that provides comprehensive access to Base blockchain data through 7 powerful resources. Interact with accounts, transactions, tokens, smart contracts, blocks, network statistics, and logs to build sophisticated blockchain automation workflows on Coinbase's Layer 2 network.
+A comprehensive n8n community node for blockchain operations, providing access to 6 core resources including blocks, transactions, accounts, contracts, tokens, and networks. This node enables seamless integration with blockchain networks for querying data, monitoring transactions, managing smart contracts, and automating blockchain-based workflows.
 
 ![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-blue)
 ![License](https://img.shields.io/badge/license-BSL--1.1-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
-![Base Network](https://img.shields.io/badge/Base-Blockchain-0052FF)
-![Layer 2](https://img.shields.io/badge/Layer%202-Ethereum-627EEA)
-![Coinbase](https://img.shields.io/badge/Coinbase-Powered-1652F0)
+![Blockchain](https://img.shields.io/badge/blockchain-enabled-orange)
+![Web3](https://img.shields.io/badge/Web3-compatible-green)
+![DeFi](https://img.shields.io/badge/DeFi-ready-purple)
 
 ## Features
 
-- **Multi-Resource Support** - Access accounts, transactions, tokens, contracts, blocks, stats, and logs in one unified node
-- **Real-Time Data** - Query live blockchain data with up-to-date information from the Base network
-- **Smart Contract Integration** - Read contract data, decode function calls, and monitor contract events
-- **Transaction Analysis** - Retrieve detailed transaction information including gas usage, status, and trace data
-- **Token Operations** - Get token balances, transfers, metadata, and holder information for ERC-20 and ERC-721 tokens
-- **Block Explorer Functions** - Access complete block data, transaction lists, and network statistics
-- **Event Monitoring** - Query and filter blockchain logs for specific events and contract interactions
-- **Flexible Authentication** - Secure API key-based access with rate limiting support
+- **Block Operations** - Query block data, retrieve block headers, and monitor blockchain height
+- **Transaction Management** - Send transactions, query transaction status, and retrieve transaction history
+- **Account Operations** - Check balances, manage addresses, and monitor account activity
+- **Smart Contract Integration** - Deploy contracts, call contract methods, and monitor contract events
+- **Token Operations** - Transfer tokens, query token balances, and manage token metadata
+- **Network Management** - Switch networks, check network status, and retrieve network information
+- **Real-time Monitoring** - Monitor blockchain events and transaction confirmations
+- **Multi-chain Support** - Compatible with various blockchain networks and protocols
 
 ## Installation
 
@@ -61,135 +61,118 @@ n8n start
 
 | Field | Description | Required |
 |-------|-------------|----------|
-| API Key | Your Base blockchain API key from supported providers (Alchemy, QuickNode, etc.) | Yes |
-| Base URL | Custom API endpoint URL (if using self-hosted node) | No |
-| Rate Limit | Maximum requests per second (default: 5) | No |
+| API Key | Your blockchain API key for authentication | Yes |
+| Network URL | RPC endpoint URL for the blockchain network | Yes |
+| Chain ID | Numeric identifier for the blockchain network | No |
 | Timeout | Request timeout in milliseconds (default: 30000) | No |
 
 ## Resources & Operations
 
-### 1. Accounts
+### 1. Block
 
 | Operation | Description |
 |-----------|-------------|
-| Get Balance | Retrieve ETH balance for a specific address |
-| Get Transaction Count | Get the nonce (transaction count) for an address |
-| Get Code | Retrieve smart contract bytecode for a contract address |
-| Get Storage | Get storage value at a specific position for a contract |
-| List Transactions | Get transaction history for an address |
-| Get Token Balances | Retrieve all token balances for an address |
+| Get | Retrieve block information by block number or hash |
+| Get Latest | Get the most recent block data |
+| Get Range | Retrieve multiple blocks within a specified range |
+| Get Header | Get block header information only |
+| Get Transactions | List all transactions in a specific block |
 
-### 2. Transactions
+### 2. Transaction
 
 | Operation | Description |
 |-----------|-------------|
-| Get Transaction | Retrieve detailed transaction information by hash |
-| Get Receipt | Get transaction receipt with logs and status |
-| Get Trace | Get detailed trace information for a transaction |
-| Send Raw Transaction | Broadcast a signed raw transaction |
-| Estimate Gas | Estimate gas cost for a transaction |
+| Send | Broadcast a new transaction to the blockchain |
+| Get | Retrieve transaction details by transaction hash |
+| Get Receipt | Get transaction receipt and execution status |
+| Get History | Retrieve transaction history for an address |
+| Estimate Gas | Calculate gas requirements for a transaction |
 | Get Pending | List pending transactions in the mempool |
 
-### 3. Tokens
+### 3. Account
 
 | Operation | Description |
 |-----------|-------------|
-| Get Token Info | Retrieve token metadata (name, symbol, decimals) |
-| Get Balance | Get token balance for a specific address |
-| Get Transfers | List token transfer events |
-| Get Holders | Get list of token holders |
-| Get Total Supply | Retrieve total token supply |
-| Get Allowances | Get token spending allowances |
+| Get Balance | Retrieve account balance for native currency |
+| Get Nonce | Get the next nonce value for an account |
+| Get Info | Retrieve comprehensive account information |
+| Create | Generate a new blockchain account/address |
+| Import | Import an existing account using private key |
+| List | List all accounts in the wallet |
 
-### 4. Contracts
-
-| Operation | Description |
-|-----------|-------------|
-| Call Function | Execute a read-only contract function call |
-| Get ABI | Retrieve contract ABI if available |
-| Get Events | Get contract events and logs |
-| Verify Contract | Check contract verification status |
-| Get Source Code | Retrieve verified contract source code |
-| Decode Input | Decode transaction input data |
-
-### 5. Blocks
+### 4. Contract
 
 | Operation | Description |
 |-----------|-------------|
-| Get Block | Retrieve block information by number or hash |
-| Get Latest Block | Get the most recent block |
-| Get Block Range | Retrieve multiple blocks in a range |
-| Get Uncle Blocks | Get uncle blocks for a specific block |
-| Get Block Transactions | List all transactions in a block |
-| Get Block Receipts | Get all transaction receipts for a block |
+| Deploy | Deploy a new smart contract to the blockchain |
+| Call | Execute a read-only contract method |
+| Send | Execute a state-changing contract method |
+| Get Code | Retrieve contract bytecode |
+| Get ABI | Get contract Application Binary Interface |
+| Listen Events | Monitor contract events and logs |
 
-### 6. Stats
-
-| Operation | Description |
-|-----------|-------------|
-| Get Network Stats | Retrieve current network statistics |
-| Get Gas Price | Get current recommended gas prices |
-| Get TPS | Get current transactions per second |
-| Get Node Info | Get blockchain node information |
-| Get Chain ID | Retrieve the Base network chain ID |
-| Get Block Time | Get average block time statistics |
-
-### 7. Logs
+### 5. Token
 
 | Operation | Description |
 |-----------|-------------|
-| Get Logs | Query blockchain logs with filters |
-| Get Event Logs | Get logs for specific contract events |
-| Filter Logs | Apply complex filters to log queries |
-| Decode Logs | Decode log data using ABI |
-| Get Log Range | Retrieve logs within a block range |
-| Subscribe to Logs | Set up log monitoring (webhook-based) |
+| Transfer | Send tokens between addresses |
+| Get Balance | Check token balance for an address |
+| Get Info | Retrieve token metadata and information |
+| Approve | Approve token spending allowance |
+| Get Allowance | Check approved spending allowance |
+| Get Supply | Get total token supply information |
+
+### 6. Network
+
+| Operation | Description |
+|-----------|-------------|
+| Get Info | Retrieve network status and information |
+| Switch | Change active blockchain network |
+| Get Gas Price | Get current gas price recommendations |
+| Get Peers | List connected network peers |
+| Get Sync Status | Check blockchain synchronization status |
+| Get Version | Get network client version information |
 
 ## Usage Examples
 
-### Get Account Balance
 ```javascript
-// Get ETH balance for an address
+// Get latest block information
 {
-  "resource": "accounts",
+  "resource": "block",
+  "operation": "getLatest",
+  "includeTransactions": true
+}
+```
+
+```javascript
+// Send a transaction
+{
+  "resource": "transaction",
+  "operation": "send",
+  "to": "0x742d35Cc6634C0532925a3b8D39d8A7B9B2E5d4A",
+  "value": "1000000000000000000",
+  "gasLimit": "21000"
+}
+```
+
+```javascript
+// Check token balance
+{
+  "resource": "token",
   "operation": "getBalance",
-  "address": "0x742C3cF9Af45f91B109a81EfEaf11535ECDe9571",
-  "blockTag": "latest"
+  "contractAddress": "0xA0b86a33E6441b38A0b7c8dd4f87C5b0b8dCd82B",
+  "address": "0x742d35Cc6634C0532925a3b8D39d8A7B9B2E5d4A"
 }
 ```
 
-### Monitor Token Transfers
 ```javascript
-// Get recent USDC transfers
+// Call smart contract method
 {
-  "resource": "tokens",
-  "operation": "getTransfers",
-  "contractAddress": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-  "fromBlock": "latest-1000",
-  "toBlock": "latest"
-}
-```
-
-### Call Smart Contract Function
-```javascript
-// Read data from a contract
-{
-  "resource": "contracts",
-  "operation": "callFunction",
-  "contractAddress": "0x4200000000000000000000000000000000000006",
-  "functionName": "balanceOf",
-  "parameters": ["0x742C3cF9Af45f91B109a81EfEaf11535ECDe9571"]
-}
-```
-
-### Get Block Information
-```javascript
-// Retrieve latest block details
-{
-  "resource": "blocks",
-  "operation": "getLatestBlock",
-  "includeTransactions": true,
-  "includeReceipts": false
+  "resource": "contract",
+  "operation": "call",
+  "contractAddress": "0xA0b86a33E6441b38A0b7c8dd4f87C5b0b8dCd82B",
+  "method": "balanceOf",
+  "parameters": ["0x742d35Cc6634C0532925a3b8D39d8A7B9B2E5d4A"]
 }
 ```
 
@@ -197,12 +180,12 @@ n8n start
 
 | Error | Description | Solution |
 |-------|-------------|----------|
-| Invalid API Key | Authentication failed with provided API key | Verify API key is correct and has proper permissions |
-| Rate Limit Exceeded | Too many requests sent in short period | Reduce request frequency or upgrade API plan |
-| Invalid Address | Provided address is not a valid Ethereum address | Check address format and ensure it's properly checksummed |
-| Block Not Found | Requested block number or hash doesn't exist | Verify block exists and hasn't been reorganized |
-| Contract Not Found | Contract address doesn't contain deployed code | Ensure address is correct and contract is deployed |
-| Network Error | Connection timeout or network unavailable | Check internet connection and API endpoint status |
+| Invalid API Key | Authentication failed with provided credentials | Verify API key is correct and has necessary permissions |
+| Insufficient Gas | Transaction gas limit too low for execution | Increase gas limit or use gas estimation |
+| Network Timeout | Request exceeded timeout duration | Check network connectivity or increase timeout value |
+| Invalid Address | Blockchain address format is incorrect | Validate address format for the specific network |
+| Insufficient Balance | Account lacks funds for transaction | Ensure account has adequate balance including gas fees |
+| Contract Not Found | Smart contract does not exist at specified address | Verify contract address and deployment status |
 
 ## Development
 
@@ -247,5 +230,5 @@ Contributions are welcome! Please ensure:
 ## Support
 
 - **Issues**: [GitHub Issues](https://github.com/Velocity-BPA/n8n-nodes-base-blockchain/issues)
-- **Base Documentation**: [Base Developer Docs](https://docs.base.org/)
-- **Base Discord**: [Base Community](https://discord.gg/buildonbase)
+- **Web3 Documentation**: [Web3.js Docs](https://web3js.readthedocs.io/)
+- **Ethereum API Reference**: [Ethereum JSON-RPC](https://ethereum.org/en/developers/docs/apis/json-rpc/)
