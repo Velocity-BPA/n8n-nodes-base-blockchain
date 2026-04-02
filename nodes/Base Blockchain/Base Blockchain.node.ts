@@ -75,6 +75,30 @@ export class BaseBlockchain implements INodeType {
           {
             name: 'Logs',
             value: 'logs',
+          },
+          {
+            name: 'Block',
+            value: 'block',
+          },
+          {
+            name: 'Transaction',
+            value: 'transaction',
+          },
+          {
+            name: 'Account',
+            value: 'account',
+          },
+          {
+            name: 'Contract',
+            value: 'contract',
+          },
+          {
+            name: 'Token',
+            value: 'token',
+          },
+          {
+            name: 'Network',
+            value: 'network',
           }
         ],
         default: 'accounts',
@@ -375,6 +399,90 @@ export class BaseBlockchain implements INodeType {
     },
   ],
   default: 'getLogs',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['block'] } },
+  options: [
+    { name: 'Get Block By Number', value: 'getBlockByNumber', description: 'Get block by number', action: 'Get block by number' },
+    { name: 'Get Block By Hash', value: 'getBlockByHash', description: 'Get block by hash', action: 'Get block by hash' },
+    { name: 'Get Latest Block', value: 'getLatestBlock', description: 'Get latest block number', action: 'Get latest block' },
+    { name: 'Get Block Transaction Count', value: 'getBlockTransactionCount', description: 'Get transaction count in block', action: 'Get block transaction count' }
+  ],
+  default: 'getBlockByNumber',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['transaction'] } },
+  options: [
+    { name: 'Get Transaction', value: 'getTransaction', description: 'Get transaction by hash', action: 'Get transaction' },
+    { name: 'Get Transaction Receipt', value: 'getTransactionReceipt', description: 'Get transaction receipt', action: 'Get transaction receipt' },
+    { name: 'Send Raw Transaction', value: 'sendRawTransaction', description: 'Broadcast signed transaction', action: 'Send raw transaction' },
+    { name: 'Estimate Gas', value: 'estimateGas', description: 'Estimate gas for transaction', action: 'Estimate gas' },
+    { name: 'Get Transaction Count', value: 'getTransactionCount', description: 'Get account nonce', action: 'Get transaction count' }
+  ],
+  default: 'getTransaction',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['account'] } },
+  options: [
+    { name: 'Get Balance', value: 'getBalance', description: 'Get ETH balance of account', action: 'Get balance' },
+    { name: 'Get Code', value: 'getCode', description: 'Get contract code at address', action: 'Get code' },
+    { name: 'Get Storage At', value: 'getStorageAt', description: 'Get storage value at position', action: 'Get storage at' }
+  ],
+  default: 'getBalance',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['contract'] } },
+  options: [
+    { name: 'Call', value: 'call', description: 'Execute read-only contract call', action: 'Execute read-only contract call' },
+    { name: 'Estimate Gas', value: 'estimateGas', description: 'Estimate gas for contract interaction', action: 'Estimate gas for contract interaction' },
+    { name: 'Get Logs', value: 'getLogs', description: 'Get contract event logs', action: 'Get contract event logs' },
+    { name: 'Get Code', value: 'getCode', description: 'Get contract bytecode', action: 'Get contract bytecode' }
+  ],
+  default: 'call',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['token'] } },
+  options: [
+    { name: 'Get Token Balance', value: 'getBalance', description: 'Get token balance via contract call', action: 'Get token balance' },
+    { name: 'Get Token Metadata', value: 'getMetadata', description: 'Get token metadata via contract call', action: 'Get token metadata' },
+    { name: 'Get Token Allowance', value: 'getAllowance', description: 'Get token allowance via contract call', action: 'Get token allowance' },
+    { name: 'Get Token Transfer Events', value: 'getTransferEvents', description: 'Get token transfer events via logs', action: 'Get token transfer events' }
+  ],
+  default: 'getBalance',
+},
+{
+  displayName: 'Operation',
+  name: 'operation',
+  type: 'options',
+  noDataExpression: true,
+  displayOptions: { show: { resource: ['network'] } },
+  options: [
+    { name: 'Get Chain ID', value: 'getChainId', description: 'Get Base chain ID', action: 'Get chain ID' },
+    { name: 'Get Gas Price', value: 'getGasPrice', description: 'Get current gas price', action: 'Get gas price' },
+    { name: 'Get Fee History', value: 'getFeeHistory', description: 'Get historical gas fees', action: 'Get fee history' },
+    { name: 'Get Sync Status', value: 'syncing', description: 'Get sync status', action: 'Get sync status' }
+  ],
+  default: 'getChainId',
 },
       // Parameter definitions
 {
@@ -1437,6 +1545,327 @@ export class BaseBlockchain implements INodeType {
   default: 10,
   description: 'The number of results per page',
 },
+{
+  displayName: 'Block Number',
+  name: 'blockNumber',
+  type: 'string',
+  default: 'latest',
+  description: 'Block number in hex, or "latest", "earliest", "pending"',
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlockByNumber', 'getBlockTransactionCount']
+    }
+  }
+},
+{
+  displayName: 'Include Transactions',
+  name: 'includeTransactions',
+  type: 'boolean',
+  default: false,
+  description: 'Whether to include full transaction objects',
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlockByNumber']
+    }
+  }
+},
+{
+  displayName: 'Block Hash',
+  name: 'blockHash',
+  type: 'string',
+  default: '',
+  description: 'Block hash to retrieve',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlockByHash']
+    }
+  }
+},
+{
+  displayName: 'Include Transactions',
+  name: 'includeTransactions',
+  type: 'boolean',
+  default: false,
+  description: 'Whether to include full transaction objects',
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlockByHash']
+    }
+  }
+},
+{
+  displayName: 'Transaction Hash',
+  name: 'transactionHash',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['transaction'],
+      operation: ['getTransaction']
+    }
+  },
+  default: '',
+  description: 'The hash of the transaction to retrieve',
+  placeholder: '0x...'
+},
+{
+  displayName: 'Transaction Hash',
+  name: 'transactionHash',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['transaction'],
+      operation: ['getTransactionReceipt']
+    }
+  },
+  default: '',
+  description: 'The hash of the transaction to get receipt for',
+  placeholder: '0x...'
+},
+{
+  displayName: 'Signed Transaction Data',
+  name: 'signedTransactionData',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['transaction'],
+      operation: ['sendRawTransaction']
+    }
+  },
+  default: '',
+  description: 'The signed transaction data in hex format',
+  placeholder: '0x...'
+},
+{
+  displayName: 'Transaction Object',
+  name: 'transactionObject',
+  type: 'json',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['transaction'],
+      operation: ['estimateGas']
+    }
+  },
+  default: '{}',
+  description: 'Transaction object to estimate gas for (JSON format)',
+  placeholder: '{"to": "0x...", "value": "0x0", "data": "0x..."}'
+},
+{
+  displayName: 'Address',
+  name: 'address',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['transaction'],
+      operation: ['getTransactionCount']
+    }
+  },
+  default: '',
+  description: 'The address to get transaction count for',
+  placeholder: '0x...'
+},
+{
+  displayName: 'Block Number',
+  name: 'blockNumber',
+  type: 'string',
+  displayOptions: {
+    show: {
+      resource: ['transaction'],
+      operation: ['getTransactionCount']
+    }
+  },
+  default: 'latest',
+  description: 'Block number or tag (latest, earliest, pending)',
+  placeholder: 'latest'
+},
+{
+  displayName: 'Address',
+  name: 'address',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['account'],
+      operation: ['getBalance', 'getCode', 'getStorageAt']
+    }
+  },
+  default: '',
+  placeholder: '0x742e4758d8f3f0e5c6e8e5e5e5e5e5e5e5e5e5e5',
+  description: 'The Ethereum address to query'
+},
+{
+  displayName: 'Block Number',
+  name: 'blockNumber',
+  type: 'string',
+  displayOptions: {
+    show: {
+      resource: ['account'],
+      operation: ['getBalance', 'getCode', 'getStorageAt']
+    }
+  },
+  default: 'latest',
+  placeholder: 'latest, earliest, pending, or hex block number',
+  description: 'Block number as hex, "latest", "earliest", or "pending"'
+},
+{
+  displayName: 'Position',
+  name: 'position',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['account'],
+      operation: ['getStorageAt']
+    }
+  },
+  default: '0x0',
+  placeholder: '0x0',
+  description: 'Storage position as hex value'
+},
+{
+  displayName: 'Transaction Object',
+  name: 'transactionObject',
+  type: 'json',
+  required: true,
+  displayOptions: { show: { resource: ['contract'], operation: ['call'] } },
+  default: '{}',
+  description: 'Transaction object for the contract call',
+  placeholder: '{"to": "0x...", "data": "0x..."}',
+},
+{
+  displayName: 'Block Number',
+  name: 'blockNumber',
+  type: 'string',
+  displayOptions: { show: { resource: ['contract'], operation: ['call'] } },
+  default: 'latest',
+  description: 'Block number as hex, "latest", "earliest", or "pending"',
+  placeholder: 'latest',
+},
+{
+  displayName: 'Transaction Object',
+  name: 'transactionObject',
+  type: 'json',
+  required: true,
+  displayOptions: { show: { resource: ['contract'], operation: ['estimateGas'] } },
+  default: '{}',
+  description: 'Transaction object for gas estimation',
+  placeholder: '{"to": "0x...", "data": "0x..."}',
+},
+{
+  displayName: 'Filter Object',
+  name: 'filterObject',
+  type: 'json',
+  required: true,
+  displayOptions: { show: { resource: ['contract'], operation: ['getLogs'] } },
+  default: '{}',
+  description: 'Filter object for event logs',
+  placeholder: '{"address": "0x...", "topics": [...]}',
+},
+{
+  displayName: 'Contract Address',
+  name: 'contractAddress',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['contract'], operation: ['getCode'] } },
+  default: '',
+  description: 'Contract address to get bytecode for',
+  placeholder: '0x...',
+},
+{
+  displayName: 'Block Number',
+  name: 'blockNumber',
+  type: 'string',
+  displayOptions: { show: { resource: ['contract'], operation: ['getCode'] } },
+  default: 'latest',
+  description: 'Block number as hex, "latest", "earliest", or "pending"',
+  placeholder: 'latest',
+},
+{
+  displayName: 'Contract Address',
+  name: 'contractAddress',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['token'], operation: ['getBalance', 'getMetadata', 'getAllowance'] } },
+  default: '',
+  description: 'The contract address of the token',
+},
+{
+  displayName: 'Method Call',
+  name: 'methodCall',
+  type: 'string',
+  required: true,
+  displayOptions: { show: { resource: ['token'], operation: ['getBalance', 'getMetadata', 'getAllowance'] } },
+  default: '',
+  description: 'The method call data for the contract',
+},
+{
+  displayName: 'Block Number',
+  name: 'blockNumber',
+  type: 'string',
+  displayOptions: { show: { resource: ['token'], operation: ['getBalance', 'getMetadata', 'getAllowance'] } },
+  default: 'latest',
+  description: 'Block number as hex, "latest", "earliest", or "pending"',
+},
+{
+  displayName: 'Filter Object',
+  name: 'filterObject',
+  type: 'json',
+  required: true,
+  displayOptions: { show: { resource: ['token'], operation: ['getTransferEvents'] } },
+  default: '{}',
+  description: 'Filter object for log queries',
+},
+{
+  displayName: 'Block Count',
+  name: 'blockCount',
+  type: 'number',
+  required: true,
+  displayOptions: { 
+    show: { 
+      resource: ['network'],
+      operation: ['getFeeHistory'] 
+    } 
+  },
+  default: 4,
+  description: 'Number of blocks in the requested range',
+},
+{
+  displayName: 'Newest Block',
+  name: 'newestBlock',
+  type: 'string',
+  required: true,
+  displayOptions: { 
+    show: { 
+      resource: ['network'],
+      operation: ['getFeeHistory'] 
+    } 
+  },
+  default: 'latest',
+  description: 'Highest number block of the requested range (can be "latest", "earliest", "pending", or hex block number)',
+},
+{
+  displayName: 'Reward Percentiles',
+  name: 'rewardPercentiles',
+  type: 'json',
+  required: false,
+  displayOptions: { 
+    show: { 
+      resource: ['network'],
+      operation: ['getFeeHistory'] 
+    } 
+  },
+  default: '[25, 50, 75]',
+  description: 'Array of percentile values to sample from each block\'s effective priority fees per gas',
+},
     ],
   };
 
@@ -1459,6 +1888,18 @@ export class BaseBlockchain implements INodeType {
         return [await executeStatsOperations.call(this, items)];
       case 'logs':
         return [await executeLogsOperations.call(this, items)];
+      case 'block':
+        return [await executeBlockOperations.call(this, items)];
+      case 'transaction':
+        return [await executeTransactionOperations.call(this, items)];
+      case 'account':
+        return [await executeAccountOperations.call(this, items)];
+      case 'contract':
+        return [await executeContractOperations.call(this, items)];
+      case 'token':
+        return [await executeTokenOperations.call(this, items)];
+      case 'network':
+        return [await executeNetworkOperations.call(this, items)];
       default:
         throw new NodeOperationError(this.getNode(), `The resource "${resource}" is not supported`);
     }
@@ -1635,898 +2076,3 @@ async function executeAccountsOperations(
         returnData.push({
           json: { error: error.message },
           pairedItem: { item: i },
-        });
-      } else {
-        throw error;
-      }
-    }
-  }
-  
-  return returnData;
-}
-
-async function executeTransactionsOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('baseblockchainApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'getTransaction': {
-          const txhash = this.getNodeParameter('txhash', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: 'https://api.basescan.org/api',
-            qs: {
-              module: 'proxy',
-              action: 'eth_getTransactionByHash',
-              txhash: txhash,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          
-          if (result.error) {
-            throw new NodeApiError(this.getNode(), result.error, { message: result.error.message });
-          }
-          break;
-        }
-        
-        case 'getTransactionReceipt': {
-          const txhash = this.getNodeParameter('txhash', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: 'https://api.basescan.org/api',
-            qs: {
-              module: 'proxy',
-              action: 'eth_getTransactionReceipt',
-              txhash: txhash,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          
-          if (result.error) {
-            throw new NodeApiError(this.getNode(), result.error, { message: result.error.message });
-          }
-          break;
-        }
-        
-        case 'getTransactionStatus': {
-          const txhash = this.getNodeParameter('txhash', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: 'https://api.basescan.org/api',
-            qs: {
-              module: 'transaction',
-              action: 'gettxreceiptstatus',
-              txhash: txhash,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          
-          if (result.status === '0') {
-            throw new NodeApiError(this.getNode(), result, { message: result.message || 'Transaction status request failed' });
-          }
-          break;
-        }
-        
-        case 'getTransactionCount': {
-          const address = this.getNodeParameter('address', i) as string;
-          const tag = this.getNodeParameter('tag', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: 'https://api.basescan.org/api',
-            qs: {
-              module: 'proxy',
-              action: 'eth_getTransactionCount',
-              address: address,
-              tag: tag,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          
-          if (result.error) {
-            throw new NodeApiError(this.getNode(), result.error, { message: result.error.message });
-          }
-          break;
-        }
-        
-        case 'sendRawTransaction': {
-          const hex = this.getNodeParameter('hex', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: 'https://api.basescan.org/api',
-            qs: {
-              module: 'proxy',
-              action: 'eth_sendRawTransaction',
-              hex: hex,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          
-          if (result.error) {
-            throw new NodeApiError(this.getNode(), result.error, { message: result.error.message });
-          }
-          break;
-        }
-        
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-      
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ 
-          json: { error: error.message || 'Unknown error occurred' }, 
-          pairedItem: { item: i } 
-        });
-      } else {
-        throw error;
-      }
-    }
-  }
-  
-  return returnData;
-}
-
-async function executeTokensOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('baseblockchainApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'getTokenBalance': {
-          const contractaddress = this.getNodeParameter('contractaddress', i) as string;
-          const address = this.getNodeParameter('address', i) as string;
-          const tag = this.getNodeParameter('tag', i) as string;
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl || 'https://api.basescan.org/api'}?module=account&action=tokenbalance&contractaddress=${contractaddress}&address=${address}&tag=${tag}&apikey=${credentials.apiKey}`,
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getNFTTransactions': {
-          const address = this.getNodeParameter('address', i) as string;
-          const contractaddress = this.getNodeParameter('contractaddress', i) as string;
-          const startblock = this.getNodeParameter('startblock', i) as number;
-          const endblock = this.getNodeParameter('endblock', i) as number;
-          const page = this.getNodeParameter('page', i) as number;
-          const offset = this.getNodeParameter('offset', i) as number;
-          const sort = this.getNodeParameter('sort', i) as string;
-
-          let url = `${credentials.baseUrl || 'https://api.basescan.org/api'}?module=account&action=tokennfttx&address=${address}&startblock=${startblock}&endblock=${endblock}&page=${page}&offset=${offset}&sort=${sort}&apikey=${credentials.apiKey}`;
-          
-          if (contractaddress) {
-            url += `&contractaddress=${contractaddress}`;
-          }
-
-          const options: any = {
-            method: 'GET',
-            url,
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getTokenInfo': {
-          const contractaddress = this.getNodeParameter('contractaddress', i) as string;
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl || 'https://api.basescan.org/api'}?module=token&action=tokeninfo&contractaddress=${contractaddress}&apikey=${credentials.apiKey}`,
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getAddressTokenBalance': {
-          const address = this.getNodeParameter('address', i) as string;
-          const contractaddress = this.getNodeParameter('contractaddress', i) as string;
-          const page = this.getNodeParameter('page', i) as number;
-          const offset = this.getNodeParameter('offset', i) as number;
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl || 'https://api.basescan.org/api'}?module=account&action=addresstokenbalance&address=${address}&contractaddress=${contractaddress}&page=${page}&offset=${offset}&apikey=${credentials.apiKey}`,
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getTokenHolders': {
-          const contractaddress = this.getNodeParameter('contractaddress', i) as string;
-          const page = this.getNodeParameter('page', i) as number;
-          const offset = this.getNodeParameter('offset', i) as number;
-
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl || 'https://api.basescan.org/api'}?module=token&action=tokenholderlist&contractaddress=${contractaddress}&page=${page}&offset=${offset}&apikey=${credentials.apiKey}`,
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      if (result.status === '0' && result.message !== 'No transactions found') {
-        throw new NodeApiError(this.getNode(), result, {
-          message: result.result || result.message || 'Unknown API error',
-        });
-      }
-
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeContractsOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('baseblockchainApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'getContractABI': {
-          const address = this.getNodeParameter('address', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: 'https://api.basescan.org/api',
-            qs: {
-              module: 'contract',
-              action: 'getabi',
-              address: address,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          
-          if (result.status === '1') {
-            result.parsedAbi = JSON.parse(result.result);
-          }
-          break;
-        }
-
-        case 'getSourceCode': {
-          const address = this.getNodeParameter('address', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: 'https://api.basescan.org/api',
-            qs: {
-              module: 'contract',
-              action: 'getsourcecode',
-              address: address,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'verifyContract': {
-          const address = this.getNodeParameter('address', i) as string;
-          const sourceCode = this.getNodeParameter('sourceCode', i) as string;
-          const contractname = this.getNodeParameter('contractname', i) as string;
-          const compilerversion = this.getNodeParameter('compilerversion', i) as string;
-          const optimizationUsed = this.getNodeParameter('optimizationUsed', i) as string;
-          const runs = this.getNodeParameter('runs', i, 200) as number;
-          const constructorArguements = this.getNodeParameter('constructorArguements', i, '') as string;
-          const evmversion = this.getNodeParameter('evmversion', i, '') as string;
-          const licenseType = this.getNodeParameter('licenseType', i, '1') as string;
-
-          const formData: any = {
-            module: 'contract',
-            action: 'verifysourcecode',
-            addressHash: address,
-            name: contractname,
-            compilerVersion: compilerversion,
-            optimization: optimizationUsed,
-            contractSourceCode: sourceCode,
-            apikey: credentials.apiKey,
-            licenseType: licenseType,
-          };
-
-          if (optimizationUsed === '1') {
-            formData.runs = runs.toString();
-          }
-
-          if (constructorArguements) {
-            formData.constructorArguements = constructorArguements;
-          }
-
-          if (evmversion) {
-            formData.evmVersion = evmversion;
-          }
-
-          const options: any = {
-            method: 'POST',
-            url: 'https://api.basescan.org/api',
-            form: formData,
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'checkVerificationStatus': {
-          const guid = this.getNodeParameter('guid', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: 'https://api.basescan.org/api',
-            qs: {
-              module: 'contract',
-              action: 'checkverifystatus',
-              guid: guid,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getContractCreation': {
-          const contractaddresses = this.getNodeParameter('contractaddresses', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: 'https://api.basescan.org/api',
-            qs: {
-              module: 'contract',
-              action: 'getcontractcreation',
-              contractaddresses: contractaddresses,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      if (result.status === '0' && result.message) {
-        throw new NodeApiError(this.getNode(), {
-          message: result.message,
-          description: result.result || 'API request failed',
-        });
-      }
-
-      returnData.push({
-        json: result,
-        pairedItem: { item: i },
-      });
-
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({
-          json: { error: error.message },
-          pairedItem: { item: i },
-        });
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeBlocksOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('baseblockchainApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-
-      switch (operation) {
-        case 'getLatestBlockNumber': {
-          const options: any = {
-            method: 'GET',
-            url: 'https://api.basescan.org/api',
-            qs: {
-              module: 'proxy',
-              action: 'eth_blockNumber',
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getBlockByNumber': {
-          const tag = this.getNodeParameter('tag', i) as string;
-          const returnFullTransactions = this.getNodeParameter('boolean', i) as boolean;
-
-          const options: any = {
-            method: 'GET',
-            url: 'https://api.basescan.org/api',
-            qs: {
-              module: 'proxy',
-              action: 'eth_getBlockByNumber',
-              tag: tag,
-              boolean: returnFullTransactions.toString(),
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getBlockReward': {
-          const blockno = this.getNodeParameter('blockno', i) as string;
-
-          const options: any = {
-            method: 'GET',
-            url: 'https://api.basescan.org/api',
-            qs: {
-              module: 'block',
-              action: 'getblockreward',
-              blockno: blockno,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getBlockCountdown': {
-          const blockno = this.getNodeParameter('blockno', i) as string;
-
-          const options: any = {
-            method: 'GET',
-            url: 'https://api.basescan.org/api',
-            qs: {
-              module: 'block',
-              action: 'getblockcountdown',
-              blockno: blockno,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getBlockTransactionCount': {
-          const tag = this.getNodeParameter('tag', i) as string;
-
-          const options: any = {
-            method: 'GET',
-            url: 'https://api.basescan.org/api',
-            qs: {
-              module: 'proxy',
-              action: 'eth_getBlockTransactionCountByNumber',
-              tag: tag,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      // Check for API errors
-      if (result.status === '0' && result.message && result.message !== 'OK') {
-        throw new NodeApiError(this.getNode(), result, {
-          message: `Base API Error: ${result.message}`,
-          description: result.result || 'Unknown error occurred',
-        });
-      }
-
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({
-          json: { error: error.message },
-          pairedItem: { item: i },
-        });
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  return returnData;
-}
-
-async function executeStatsOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('baseblockchainApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-      
-      switch (operation) {
-        case 'getTotalSupply': {
-          const contractAddress = this.getNodeParameter('contractAddress', i) as string;
-          
-          if (!contractAddress.startsWith('0x')) {
-            throw new NodeOperationError(this.getNode(), 'Contract address must be in hex format (start with 0x)');
-          }
-
-          const options: any = {
-            method: 'GET',
-            url: credentials.baseUrl,
-            qs: {
-              module: 'stats',
-              action: 'tokensupply',
-              contractaddress: contractAddress,
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          
-          const response = await this.helpers.httpRequest(options) as any;
-          
-          if (response.status !== '1') {
-            throw new NodeOperationError(this.getNode(), `API Error: ${response.message || 'Unknown error'}`);
-          }
-
-          result = {
-            contractAddress,
-            totalSupply: response.result,
-            totalSupplyFormatted: formatFromWei(response.result),
-          };
-          break;
-        }
-
-        case 'getGasOracle': {
-          const options: any = {
-            method: 'GET',
-            url: credentials.baseUrl,
-            qs: {
-              module: 'gastracker',
-              action: 'gasoracle',
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          
-          const response = await this.helpers.httpRequest(options) as any;
-          
-          if (response.status !== '1') {
-            throw new NodeOperationError(this.getNode(), `API Error: ${response.message || 'Unknown error'}`);
-          }
-
-          result = {
-            gasOracle: response.result,
-          };
-          break;
-        }
-
-        case 'getETHSupply': {
-          const options: any = {
-            method: 'GET',
-            url: credentials.baseUrl,
-            qs: {
-              module: 'stats',
-              action: 'ethsupply',
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          
-          const response = await this.helpers.httpRequest(options) as any;
-          
-          if (response.status !== '1') {
-            throw new NodeOperationError(this.getNode(), `API Error: ${response.message || 'Unknown error'}`);
-          }
-
-          result = {
-            ethSupply: response.result,
-            ethSupplyFormatted: formatFromWei(response.result),
-          };
-          break;
-        }
-
-        case 'getETHPrice': {
-          const options: any = {
-            method: 'GET',
-            url: credentials.baseUrl,
-            qs: {
-              module: 'stats',
-              action: 'ethprice',
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          
-          const response = await this.helpers.httpRequest(options) as any;
-          
-          if (response.status !== '1') {
-            throw new NodeOperationError(this.getNode(), `API Error: ${response.message || 'Unknown error'}`);
-          }
-
-          result = {
-            ethPrice: response.result,
-          };
-          break;
-        }
-
-        case 'getCurrentGasPrice': {
-          const options: any = {
-            method: 'GET',
-            url: credentials.baseUrl,
-            qs: {
-              module: 'proxy',
-              action: 'eth_gasPrice',
-              apikey: credentials.apiKey,
-            },
-            json: true,
-          };
-          
-          const response = await this.helpers.httpRequest(options) as any;
-          
-          if (response.error) {
-            throw new NodeOperationError(this.getNode(), `API Error: ${response.error.message || 'Unknown error'}`);
-          }
-
-          const gasPrice = response.result;
-          const gasPriceGwei = parseInt(gasPrice, 16) / 1e9;
-
-          result = {
-            gasPriceHex: gasPrice,
-            gasPriceWei: parseInt(gasPrice, 16).toString(),
-            gasPriceGwei: gasPriceGwei.toString(),
-          };
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  return returnData;
-}
-
-function formatFromWei(weiValue: string): string {
-  try {
-    const wei = BigInt(weiValue);
-    const eth = Number(wei) / 1e18;
-    return eth.toFixed(6);
-  } catch (error: any) {
-    return weiValue;
-  }
-}
-
-async function executeLogsOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('baseblockchainApi') as any;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-      
-      switch (operation) {
-        case 'getLogs': {
-          const fromBlock = this.getNodeParameter('fromBlock', i) as string;
-          const toBlock = this.getNodeParameter('toBlock', i) as string;
-          const address = this.getNodeParameter('address', i) as string;
-          const topic0 = this.getNodeParameter('topic0', i) as string;
-          const topic1 = this.getNodeParameter('topic1', i) as string;
-          const topic2 = this.getNodeParameter('topic2', i) as string;
-          const topic3 = this.getNodeParameter('topic3', i) as string;
-
-          const params: any = {
-            module: 'logs',
-            action: 'getLogs',
-            apikey: credentials.apiKey,
-          };
-
-          if (fromBlock) params.fromBlock = fromBlock;
-          if (toBlock) params.toBlock = toBlock;
-          if (address) params.address = address;
-          if (topic0) params.topic0 = topic0;
-          if (topic1) params.topic1 = topic1;
-          if (topic2) params.topic2 = topic2;
-          if (topic3) params.topic3 = topic3;
-
-          const options: any = {
-            method: 'GET',
-            url: credentials.baseUrl || 'https://api.basescan.org/api',
-            qs: params,
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getFilteredLogs': {
-          const fromBlock = this.getNodeParameter('fromBlock', i) as string;
-          const toBlock = this.getNodeParameter('toBlock', i) as string;
-          const address = this.getNodeParameter('address', i) as string;
-          const topicsString = this.getNodeParameter('topics', i) as string;
-
-          const filterParams: any = {};
-          if (fromBlock) filterParams.fromBlock = fromBlock;
-          if (toBlock) filterParams.toBlock = toBlock;
-          if (address) filterParams.address = address;
-          if (topicsString) {
-            try {
-              filterParams.topics = JSON.parse(topicsString);
-            } catch (error: any) {
-              throw new NodeOperationError(this.getNode(), 'Topics must be valid JSON array');
-            }
-          }
-
-          const params: any = {
-            module: 'proxy',
-            action: 'eth_getLogs',
-            apikey: credentials.apiKey,
-            ...filterParams,
-          };
-
-          const options: any = {
-            method: 'GET',
-            url: credentials.baseUrl || 'https://api.basescan.org/api',
-            qs: params,
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getMinedBlocks': {
-          const address = this.getNodeParameter('address', i) as string;
-          const blocktype = this.getNodeParameter('blocktype', i) as string;
-          const page = this.getNodeParameter('page', i) as number;
-          const offset = this.getNodeParameter('offset', i) as number;
-
-          const params: any = {
-            module: 'account',
-            action: 'getminedblocks',
-            address: address,
-            blocktype: blocktype,
-            page: page.toString(),
-            offset: offset.toString(),
-            apikey: credentials.apiKey,
-          };
-
-          const options: any = {
-            method: 'GET',
-            url: credentials.baseUrl || 'https://api.basescan.org/api',
-            qs: params,
-            json: true,
-          };
-
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      if (result && result.status === '0' && result.message !== 'OK') {
-        throw new NodeApiError(this.getNode(), result, {
-          message: `API Error: ${result.message}`,
-          description: result.result || 'Unknown error from API',
-        });
-      }
-
-      returnData.push({
-        json: result,
-        pairedItem: { item: i },
-      });
-
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({
-          json: { error: error.message },
-          pairedItem: { item: i },
-        });
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  return returnData;
-}
