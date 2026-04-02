@@ -2,16 +2,21 @@
   "compilerOptions": {
     "target": "es2019",
     "module": "commonjs",
+    "lib": ["es2019"],
     "outDir": "./dist",
     "rootDir": "./",
     "strict": true,
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
     "nodes/**/*",
@@ -19,6 +24,6 @@
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "**/*.test.ts"
   ]
 }
